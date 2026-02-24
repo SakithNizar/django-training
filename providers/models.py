@@ -13,4 +13,7 @@ class Provider(models.Model):
 
     objects = models.Manager()  # default
     active_providers = ActiveProviderManager()  # custom manager
+
+    def __str__(self):
+        return self.business_name  # <-- this makes the shell show the business name
     
