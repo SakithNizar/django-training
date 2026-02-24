@@ -1,7 +1,12 @@
 from django.views.generic import ListView
 from django.db.models import Q
 from .models import Provider
+from django.views.generic import DetailView
 
+class ProviderDetailView(DetailView):
+    model = Provider
+    template_name = "providers/provider_detail.html"
+    context_object_name = "provider"
 
 class ProviderListView(ListView):
     model = Provider
