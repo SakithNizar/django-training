@@ -8,7 +8,10 @@
 <ul>
     {% for provider in providers %}
     <li>
-        <a href="{% url 'provider_detail' provider.id %}">{{ provider.business_name }}</a>
+        <a href="{% url 'provider_detail' provider.id %}">
+            {{ provider.business_name }}
+        </a>
+        — Rating: {{ provider.rating }}  <!-- Display rating here -->
     </li>
     {% empty %}
     <li>No providers found.</li>
