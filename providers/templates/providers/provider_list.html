@@ -1,0 +1,16 @@
+<h1>Providers</h1>
+
+<form method="get">
+    <input type="text" name="search" placeholder="Search providers...">
+    <button type="submit">Search</button>
+</form>
+
+<ul>
+    {% for provider in providers %}
+    <li>
+        <a href="{% url 'provider_detail' provider.id %}">{{ provider.business_name }}</a>
+    </li>
+    {% empty %}
+    <li>No providers found.</li>
+    {% endfor %}
+</ul>
