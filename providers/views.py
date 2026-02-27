@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 # DRF imports
 from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import ProviderSerializer
 
 class ProviderListView(ListView):
@@ -30,15 +31,14 @@ class ProviderDetailView(DetailView):
     template_name = "providers/provider_detail.html"
     context_object_name = "provider"
 
-
 class ProviderViewSet(viewsets.ModelViewSet):
-
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
     permission_classes = [IsAuthenticated]
-    
-    queryset = Provider.objects.all()
-    serializer_class = ProviderSerializer
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ["business_name", "email"]
-    ordering_fields = ["business_name", "created_at"]
+
+    # Enable filtering, searching, ordering
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ["rating"]  # exact match filter
+    search_fields = ["business_name", "email", "phone"]  # partial match search
+    ordering_fields = ["business_name", "created_at", "rating"]  # sortable fields
+    ordering = ["id"]  # default ordering
