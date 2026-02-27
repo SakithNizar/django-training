@@ -1,6 +1,7 @@
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
 from .models import Provider
+from rest_framework.permissions import IsAuthenticated
 
 # DRF imports
 from rest_framework import viewsets, filters
@@ -31,11 +32,11 @@ class ProviderDetailView(DetailView):
 
 
 class ProviderViewSet(viewsets.ModelViewSet):
-    """
-    DRF ModelViewSet for Provider.
-    Provides list, create, retrieve, update, partial_update, delete.
-    Supports search and ordering.
-    """
+
+    queryset = Provider.objects.all()
+    serializer_class = ProviderSerializer
+    permission_classes = [IsAuthenticated]
+    
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
