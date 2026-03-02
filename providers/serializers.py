@@ -3,6 +3,8 @@ from .models import Provider
 
 
 class ProviderSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source="owner.username")
+
     class Meta:
         model = Provider
         fields = "__all__"
