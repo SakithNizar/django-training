@@ -39,22 +39,22 @@ django_training/
 ├── README.md
 │
 ├── training_project/
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
+│ ├── settings.py
+│ ├── urls.py
+│ └── wsgi.py
 │
 └── providers/
-    ├── models.py
-    ├── views.py
-    ├── serializers.py
-    ├── permissions.py
-    ├── api_urls.py
-    ├── urls.py
-    └── tests/
-        ├── __init__.py
-        ├── test_models.py
-        ├── test_api.py
-        └── test_permissions.py
+├── models.py
+├── views.py
+├── serializers.py
+├── permissions.py
+├── api_urls.py
+├── urls.py
+└── tests/
+├── init.py
+├── test_models.py
+├── test_api.py
+└── test_permissions.py
 
 ------------------------------------------------------------------------
 
