@@ -1,14 +1,14 @@
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
 from .models import Provider
+from django.contrib.auth.models import User  
 
-# DRF imports
-from rest_framework import viewsets, filters
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import viewsets, filters, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import ProviderSerializer
-from .permissions import IsProviderOwner, IsAdminOrReadOnly
-
+from .serializers import ProviderSerializer, UserRegistrationSerializer
 
 # -------------------------------
 # Classic Django HTML Views
@@ -38,29 +38,50 @@ class ProviderDetailView(DetailView):
 
 
 # -------------------------------
-# DRF API ViewSet
+# DRF API Views
 # -------------------------------
 
 class ProviderViewSet(viewsets.ModelViewSet):
-    """
-    DRF API endpoints for Providers:
-    - Only owners can edit/delete their own providers
-    - Anyone can read (GET)
-    - Filtering, search, ordering enabled
-    """
+   
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
+    permission_classes = [IsAuthenticated]
 
-    # Permissions
-    permission_classes = [IsAuthenticated & (IsProviderOwner | IsAdminOrReadOnly)]
-
-    # Filtering, search, ordering
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["rating"]  # exact match filter
-    search_fields = ["business_name", "email", "phone"]  # partial match search
-    ordering_fields = ["business_name", "created_at", "rating"]  # sortable fields
-    ordering = ["id"]  # default ordering
+    filterset_fields = ["rating"]
+    search_fields = ["business_name", "email", "phone"]
+    ordering_fields = ["business_name", "created_at", "rating"]
+    ordering = ["id"]
 
-    # Automatically assign the owner on creation
+    #  Show only logged-in user's providers
+    def get_queryset(self):
+        user = self.request.user
+
+        # Admin can see everything
+        if user.is_staff:
+            return Provider.objects.all()
+
+        # Normal users see only their own providers
+        return Provider.objects.filter(owner=user)
+
+    # Automatically assign owner
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+        # Custom delete message
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+
+        return Response(
+            {"message": "Provider deleted successfully."},
+            status=status.HTTP_200_OK
+        )
+
+# -------------------------------
+# User Registration API
+# -------------------------------
+class UserRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = [AllowAny] 
